@@ -1,0 +1,20 @@
+name: Deploy Tour Website Application
+on:
+  push:
+    branches:
+      - jaiye/gitactions-html
+    
+jobs:
+  ssh:
+    name: SSH into the EC2 Instance
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to the EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.JAIYE_HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.JAIYE_KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd Tour-website-2 && git pull origin jaiye/gitactions-html && sudo cp -r . /var/www/html
