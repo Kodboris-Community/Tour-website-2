@@ -1,0 +1,21 @@
+name: "Continous deployment of static application for Tour-website"
+
+on:
+    push:
+      branches: 
+           - taiye/Gitactions-website-ass2
+
+jobs:
+  build:
+    name: SSH into the Ec2 instance
+    runs-on: ubuntu-latest
+    steps:
+      - name: log into the instance
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.TAIWO_HOST }}
+          username: ${{ secrets.TAIWO_USERNAME }}
+          key: ${{ secrets.TAIWO_KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+             cd Tour-website-2 && git pull origin taiye/Gitactions-website-ass2 && sudo cp -r . /var/www/html
