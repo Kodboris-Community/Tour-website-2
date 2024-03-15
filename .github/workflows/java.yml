@@ -34,4 +34,4 @@ jobs:
               docker stop tourwebsite || true
               docker rm tourwebsite || true
               docker pull ${{ secrets.JAIYE_USERNAME }}/website:latest
-              docker run -d --name tourwebsite -p 8080:80 ${{ secrets.JAIYE_USERNAME }}/tourwebsite:latest
+              docker run -d --name tourwebsite -p 8000:80 ${{ secrets.JAIYE_USERNAME }}/tourwebsite:latest
