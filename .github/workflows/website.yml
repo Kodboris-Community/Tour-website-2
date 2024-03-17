@@ -1,21 +1,38 @@
-name: "Continous deployment of static application for Tour-website"
-
+name: Docker CI/CD Pipeline
 on:
-    push:
-      branches: 
-           - taiye/Gitactions-website-ass2
-
+  push:
+    branches:
+      - taiye/Gitactions-website-ass2
 jobs:
-  build:
-    name: SSH into the Ec2 instance
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: log into the instance
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.TAIYE_USERNAME }}
+          password: ${{ secrets.TAIYE_PASSWORD }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v5
+        with:
+          file: dockerfile
+          context: .
+          push: true
+          tags: tyrefic2k2/tyreficben10:latest
+      - name: Login to the EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.TAIWO_HOST }}
-          username: ${{ secrets.TAIWO_USERNAME }}
-          key: ${{ secrets.TAIWO_KEY }}
-          port: ${{ secrets.PORT }}
-          script: |
-             cd Taiwo.Website.Ass2 && git pull avatar taiye/Gitactions-website-ass2 && sudo cp -r . /var/www/html
+            host: ${{ secrets.TAIYE_HOST }}
+            username: ${{ secrets.ALLEN_USERNAME }}
+            key: ${{ secrets.TAIYE_KEY }}
+            port: ${{ secrets.PORT }}
+            script: |
+              docker stop aang || true
+              docker rm aang || true
+              docker pull ${{ secrets.TAIYE_USERNAME }}/tyreficben10:latest
+              docker run -d --name aang -p 60:80 ${{ secrets.TAIYE_USERNAME }}/tyreficben10:latest
+              
